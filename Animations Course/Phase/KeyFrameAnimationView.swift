@@ -7,55 +7,74 @@
 
 import SwiftUI
 
-struct KeyFrameAnimationView: View {
-    struct AnimationValues {
-        var offsetY: CGFloat = 0
-        var rotation: Angle = .degrees(0)
-        var scale =  1.0
+struct KeyframeAnimationView: View {
+    private struct AnimationValues {
+        var scale = 1.0
+        var verticalStretch = 1.0
+        var verticalOffset = 0.0
+        var angle = Angle.zero
     }
     
-    var myShape: some View {
-        Circle()
-            .stroke(
-                AngularGradient(colors: [.red, .green, .blue, .yellow, .black, .indigo, .pink], center: .center), lineWidth: 20
-            )
-            .shadow(radius: 3)
-            .frame(width: 100, height: 100)
-    }
+    var emoji: String
+    @State private var likeCount = 1
     
-    let timeDuration: TimeInterval = 5
+    var emojiView: some View {
+        Text(emoji)
+            .font(.system(size: 200))
+    }
     
     var body: some View {
-        myShape
-            .keyframeAnimator(initialValue: AnimationValues()) { content, value in
+        emojiView
+            .keyframeAnimator(
+                initialValue: AnimationValues(),
+                trigger: likeCount
+            ) { content, value in
                 content
-                    .rotationEffect(value.rotation)
-                    .offset(y: value.offsetY)
+                    .rotationEffect(value.angle)
                     .scaleEffect(value.scale)
-            } keyframes: { value in
-                KeyframeTrack(\.offsetY) {
-                    LinearKeyframe(-300, duration: 0.4 * timeDuration)
-                    
-                    SpringKeyframe(100, duration: 0.4 * timeDuration)
-                    
-                    LinearKeyframe(0, duration: 0.2 * timeDuration)
-                }
-                
-                KeyframeTrack(\.rotation) {
-                    CubicKeyframe(.zero, duration: 0.5 * timeDuration)
-                    CubicKeyframe(Angle.degrees(20 * 360), duration: 0.5 * timeDuration)
-                }
-                
+                    .scaleEffect(y: value.verticalStretch)
+                    .offset(y: value.verticalOffset)
+            } keyframes: { _ in
                 KeyframeTrack(\.scale) {
-                    SpringKeyframe(1, duration: 0.5 * timeDuration)
-                    SpringKeyframe(1.25, duration: 0.25 * timeDuration)
-                    SpringKeyframe(1, duration: 0.25 * timeDuration)
+                    LinearKeyframe(1.0, duration: 0.36)
+                    SpringKeyframe(1.5, duration: 0.8, spring: .bouncy)
+                    SpringKeyframe(1.0, spring: .bouncy)
+                }
+                
+                KeyframeTrack(\.verticalOffset) {
+                    LinearKeyframe(0.0, duration: 0.1)
+                    SpringKeyframe(20.0, duration: 0.15, spring: .bouncy)
+                    SpringKeyframe(-60.0, duration: 1.0, spring: .bouncy)
+                    SpringKeyframe(0.0, spring: .bouncy)
+                }
+
+
+                KeyframeTrack(\.verticalStretch) {
+                    CubicKeyframe(1.0, duration: 0.1)
+                    CubicKeyframe(0.6, duration: 0.15)
+                    CubicKeyframe(1.5, duration: 0.1)
+                    CubicKeyframe(1.05, duration: 0.15)
+                    CubicKeyframe(1.0, duration: 0.88)
+                    CubicKeyframe(0.8, duration: 0.1)
+                    CubicKeyframe(1.04, duration: 0.4)
+                    CubicKeyframe(1.0, duration: 0.22)
+                }
+
+
+                KeyframeTrack(\.angle) {
+                    CubicKeyframe(.zero, duration: 0.58)
+                    CubicKeyframe(.degrees(16), duration: 0.125)
+                    CubicKeyframe(.degrees(-16), duration: 0.125)
+                    CubicKeyframe(.degrees(16), duration: 0.125)
+                    CubicKeyframe(.zero, duration: 0.125)
                 }
             }
-
+            .onTapGesture {
+                likeCount += 1
+            }
     }
 }
 
 #Preview {
-    KeyFrameAnimationView()
+    KeyframeAnimationView(emoji: "❤️")
 }
