@@ -99,22 +99,29 @@ struct LogoSplashView: View {
         let text: String
         let logo: LogoPhaseModel
         
-        let ellipseWidthFactor: CGFloat = 3.5
-        let ellipseHeightFactor: CGFloat = 1.0
-        let ellipseOffsetFactor: CGFloat = 0.5
+        struct EllipseModel {
+            let widthFactor: CGFloat = 3.5
+            let heightFactor: CGFloat = 1.0
+            let offsetFactor: CGFloat = 0.5
+        }
         
-        let rectWidthFactor: CGFloat = 3.5
-        let rectHeightFactor: CGFloat = 3.5
-        let rectOffsetFactor: CGFloat = -1.25
+        struct RectangleModel {
+            let widthFactor: CGFloat = 3.5
+            let heightFactor: CGFloat = 3.5
+            let offsetFactor: CGFloat = -1.25
+        }
+        
+        let ellipse = EllipseModel()
+        let rectangle = RectangleModel()
         
         func mask(logoSize: CGFloat) -> some View {
             ZStack {
                 Ellipse()
-                    .frame(width: ellipseWidthFactor * logoSize, height: ellipseHeightFactor * logoSize)
-                    .offset(y: ellipseOffsetFactor * logoSize)
+                    .frame(width: ellipse.widthFactor * logoSize, height: ellipse.heightFactor * logoSize)
+                    .offset(y: ellipse.offsetFactor * logoSize)
                 Rectangle()
-                    .frame(width: rectWidthFactor * logoSize, height: rectHeightFactor * logoSize)
-                    .offset(y: rectOffsetFactor * logoSize)
+                    .frame(width: rectangle.widthFactor * logoSize, height: rectangle.heightFactor * logoSize)
+                    .offset(y: rectangle.offsetFactor * logoSize)
             }
         }
         
@@ -132,8 +139,8 @@ struct LogoSplashView: View {
         func ellipseShadow(logoSize: CGFloat) -> some View {
             Ellipse()
                 .scaleEffect(logo.ellipseScale)
-                .frame(width: ellipseWidthFactor * logoSize, height: ellipseHeightFactor * logoSize)
-                .offset(y: ellipseOffsetFactor * logoSize)
+                .frame(width: ellipse.widthFactor * logoSize, height: ellipse.heightFactor * logoSize)
+                .offset(y: ellipse.offsetFactor * logoSize)
         }
         
         var percentageText: some View {
